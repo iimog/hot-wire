@@ -1,6 +1,7 @@
-import {MouseEvent, useEffect, useRef, useState} from 'react';
-import labyrinth from './img/simple1.png'
+import {Fragment, MouseEvent, useEffect, useRef, useState} from 'react';
+import labyrinth from './img/simple2.png'
 import './App.css';
+import Timer from 'react-compound-timer';
 
 function App() {
   const imgRef = useRef<HTMLImageElement>(null);
@@ -8,6 +9,8 @@ function App() {
   const [width, setWidth]: [number,any] = useState(1)
   const [active, setActive] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [fails, setFails] = useState(0);
+  const [finishTimes, setFinishTimes]: [Array<[number,number]>, any] = useState([]);
   
   const imgToPixels = () => {
     if(imgRef && imgRef.current !== null){
@@ -35,21 +38,29 @@ function App() {
     return colors[2]>0 ? FREE : (colors[1]>0 ? START : (colors[0]>0 ? END : WALL));
   }
 
-  const mouseMove = (event: MouseEvent) => {
+  const mouseMove = (event: MouseEvent, start: Function, stop: Function, getTime: any) => {
     let x = event.nativeEvent.offsetX
     let y = event.nativeEvent.offsetY
     //console.log(x,y)
     if(data){
       let fieldType = getFieldType(x,y)
-      if(fieldType===START){
+      if(!finished && fieldType===START){
+        start();
         setActive(true);
       }
       if(active){
         if(fieldType===WALL){
+          stop()
           setActive(false);
+          setFails(fails+1);
+          let audio = new Audio(`${process.env.PUBLIC_URL}/sirene.wav`);
+          audio.play();
         }
         if(fieldType===END){
+          stop()
+          setActive(false);
           setFinished(true);
+          setFinishTimes([[getTime(),fails],...finishTimes]);
         }
       }
     }
@@ -61,11 +72,37 @@ function App() {
 
   return (
     <div className="App">
-      <img src={labyrinth} style={{cursor: "cell"}} onMouseMove={mouseMove} onMouseOut={()=>setActive(false)} ref={imgRef} alt="labyrinth"/>
-      <div>
-        <b style={{color: active?"green":"red"}}>{active ? "" : "in"}active</b><br/>
-        <b style={{color: finished?"green":"red"}}>{finished ? "" : "not "}finished</b>
-      </div>
+      <Timer startImmediately={false} lastUnit="s" timeToUpdate={50}>
+        
+            {//@ts-ignore
+            ({ start, resume, pause, stop, reset, timerState, getTime }) => (
+        <Fragment>
+          <div style={{fontSize: "32px"}}>
+            Time: <Timer.Seconds />,
+              <Timer.Milliseconds /><br/>
+            Fails: {fails}
+          </div>
+          <img
+            src={labyrinth}
+            style={{cursor: "cell"}}
+            onMouseMove={(e) => mouseMove(e, start, stop, getTime)}
+            onMouseOut={()=>{setActive(false);stop()}}
+            ref={imgRef}
+            alt="labyrinth"/>
+          <div>
+            <b style={{color: active?"green":"red", fontSize: "32px"}}>{active ? "" : "in"}active</b><br/>
+            <b style={{color: finished?"green":"red"}}>{finished ? "" : "not "}finished</b><br/>
+          </div>
+            <br />
+            <div>
+                <button onClick={() => {reset();setFinished(false);setFails(0)}}>Reset</button>
+            </div>
+            <ul>
+              {finishTimes.map((x,i) => (<li key={i}>{x[0]} ms - {x[1]} fails</li>))}
+            </ul>
+        </Fragment>
+    )}
+      </Timer>
     </div>
   );
 }
