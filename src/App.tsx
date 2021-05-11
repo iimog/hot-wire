@@ -2,6 +2,7 @@ import {Fragment, MouseEvent, useEffect, useRef, useState} from 'react';
 import labyrinth from './img/simple2.png'
 import './App.css';
 import Timer from 'react-compound-timer';
+import ReactImageUploadComponent from 'react-images-upload';
 
 function App() {
   const imgRef = useRef<HTMLImageElement>(null);
@@ -88,6 +89,7 @@ function App() {
             onMouseMove={(e) => mouseMove(e, start, stop, getTime)}
             onMouseOut={()=>{setActive(false);stop()}}
             ref={imgRef}
+            onLoad={imgToPixels}
             alt="labyrinth"/>
           <div>
             <b style={{color: active?"green":"red", fontSize: "32px"}}>{active ? "" : "in"}active</b><br/>
@@ -96,6 +98,19 @@ function App() {
             <br />
             <div>
                 <button onClick={() => {reset();setFinished(false);setFails(0)}}>Reset</button>
+                <ReactImageUploadComponent
+                  withIcon={true}
+                  buttonText='Choose images'
+                  singleImage={true}
+                  onChange={(x) => {
+                    let fr = new FileReader();
+                    fr.onload = () => {if(imgRef && imgRef.current && typeof fr.result === "string") {imgRef.current.src =  fr.result;}}
+                    fr.readAsDataURL(x[0]);
+                    reset()
+                  }}
+                  imgExtension={['.jpg', '.gif', '.png', '.gif']}
+                  maxFileSize={5242880}
+                />
             </div>
             <ul>
               {finishTimes.map((x,i) => (<li key={i}>{x[0]} ms - {x[1]} fails</li>))}
