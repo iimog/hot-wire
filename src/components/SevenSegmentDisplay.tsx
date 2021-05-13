@@ -3,7 +3,7 @@
 import { SevenSegmentDigit } from "./SevenSegmentDigit"
 import { SevenSegmentDot } from "./SevenSegmentDot";
 
-export const SevenSegmentDisplay = (props: { number: number, color: string, background: string }) => {
+export const SevenSegmentDisplay = (props: { number: number, color: string, background: string, dotPosition: number }) => {
     const digitStyle = {
         minWidth: "2rem",
         maxWidth: "4rem",
@@ -18,8 +18,8 @@ export const SevenSegmentDisplay = (props: { number: number, color: string, back
         number = Math.floor(number / 10)
     }
     let digitComponents = digits.map((x, i) => <SevenSegmentDigit key={i} digit={x} style={digitStyle} />);
-    if (props.number >= 100) {
-        digitComponents.splice(1, 0, <SevenSegmentDot key="dot" style={{ ...digitStyle, maxWidth: "1.5rem", minWidth: "1.5rem", }} />)
+    if (props.dotPosition > 0 && digitComponents.length > props.dotPosition) {
+        digitComponents.splice(digitComponents.length - props.dotPosition, 0, <SevenSegmentDot key="dot" style={{ ...digitStyle, maxWidth: "1.5rem", minWidth: "1.5rem", }} />)
     }
     return (
         <div style={{
@@ -36,5 +36,6 @@ export const SevenSegmentDisplay = (props: { number: number, color: string, back
 
 SevenSegmentDisplay.defaultProps = {
     color: "#AE75D2",
-    background: "#19101F"
+    background: "#19101F",
+    dotPosition: 0
 }

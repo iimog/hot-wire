@@ -1,4 +1,4 @@
-import { Fragment, MouseEvent, useEffect, useRef, useState } from 'react';
+import { MouseEvent, useEffect, useRef, useState } from 'react';
 import labyrinth from './img/simple2.png'
 import './App.css';
 import ReactImageUploadComponent from 'react-images-upload';
@@ -89,7 +89,7 @@ function App() {
     <div className="App" style={{ backgroundColor: "#333333" }}>
 
       <div style={{ fontSize: "32px", color: "white" }}>
-        Time: <SevenSegmentDisplay number={time / 10} /> &nbsp;
+        Time: <SevenSegmentDisplay number={time / 10} dotPosition={2} /> &nbsp;
         Fails: <SevenSegmentDisplay number={fails} color="#ff4242" background="#420e0e" />
       </div>
       <img
