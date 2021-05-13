@@ -1,10 +1,10 @@
 import { Fragment, MouseEvent, useEffect, useRef, useState } from 'react';
 import labyrinth from './img/simple2.png'
 import './App.css';
-import Timer from 'react-compound-timer';
 import ReactImageUploadComponent from 'react-images-upload';
 import { unstable_batchedUpdates } from 'react-dom';
 import { SevenSegmentDisplay } from './components/SevenSegmentDisplay';
+import { useTimer } from 'use-timer';
 
 declare global {
   interface Window {
@@ -21,6 +21,7 @@ function App() {
   const [finished, setFinished] = useState(false);
   const [fails, setFails] = useState(0);
   const [finishTimes, setFinishTimes]: [Array<[number, number]>, any] = useState([]);
+  const { time, start, pause, reset } = useTimer({ interval: 50, step: 50 });
 
   const imgToPixels = () => {
     if (imgRef && imgRef.current !== null) {
@@ -47,7 +48,7 @@ function App() {
     return colors[2] > 0 ? FREE : (colors[1] > 0 ? START : (colors[0] > 0 ? END : WALL));
   }
 
-  const mouseMove = (event: MouseEvent, start: Function, stop: Function, getTime: any) => {
+  const mouseMove = (event: MouseEvent) => {
     let x = event.nativeEvent.offsetX
     let y = event.nativeEvent.offsetY
     if (data) {
@@ -58,7 +59,7 @@ function App() {
       }
       if (active) {
         if (fieldType === WALL) {
-          stop()
+          pause()
           //TODO https://www.npmjs.com/package/use-local-slice
           unstable_batchedUpdates(() => {
             setActive(false);
@@ -68,10 +69,10 @@ function App() {
           audio.play();
         }
         if (fieldType === END) {
-          stop()
+          pause()
           setActive(false);
           setFinished(true);
-          setFinishTimes([[getTime(), fails], ...finishTimes]);
+          setFinishTimes([[time, fails], ...finishTimes]);
         }
       }
     }
@@ -81,56 +82,48 @@ function App() {
     setTimeout(imgToPixels, 1000)
   }, [])
 
+
   return (
     <div className="App" style={{ backgroundColor: "#333333" }}>
-      <Timer startImmediately={false} lastUnit="s" timeToUpdate={50}>
 
-        {
-          ({ start, resume, pause, stop, reset, getTime }) => (
-            <Fragment>
-              <div style={{ fontSize: "32px" }}>
-                Time: <Timer.Seconds />,
-              <Timer.Milliseconds /><br />
-            Fails:
-                  <SevenSegmentDisplay number={fails} />
-              </div>
-              <img
-                src={labyrinth}
-                style={{ cursor: "cell", margin: "1vh" }}
-                onMouseMove={(e) => mouseMove(e, start, stop, getTime)}
-                onMouseOut={() => { setActive(false); stop() }}
-                ref={imgRef}
-                onLoad={imgToPixels}
-                alt="labyrinth" />
-              <div>
-                <b style={{ color: finished ? "green" : (active ? "blue" : "red"), fontSize: "32px" }}>
-                  {finished ? "Finished! Press reset for a new round." : (active ? "Active! Be careful." : "Alarm! Move to start area.")}
-                </b>
-                <br />
-              </div>
-              <br />
-              <div>
-                <button onClick={() => { reset(); setFinished(false); setFails(0) }}>Reset</button>
-                <ReactImageUploadComponent
-                  withIcon={true}
-                  buttonText='Choose level file'
-                  singleImage={true}
-                  onChange={(x) => {
-                    let fr = new FileReader();
-                    fr.onload = () => { if (imgRef && imgRef.current && typeof fr.result === "string") { imgRef.current.src = fr.result; } }
-                    fr.readAsDataURL(x[0]);
-                    reset()
-                  }}
-                  imgExtension={['.jpg', '.gif', '.png', '.gif']}
-                  maxFileSize={5242880}
-                />
-              </div>
-              <ul>
-                {finishTimes.map((x, i) => (<li key={i}>{x[0]} ms - {x[1]} fails</li>))}
-              </ul>
-            </Fragment>
-          )}
-      </Timer>
+      <div style={{ fontSize: "32px", color: "white" }}>
+        Time: <SevenSegmentDisplay number={time / 10} /> &nbsp;
+        Fails: <SevenSegmentDisplay number={fails} color="#ff4242" background="#420e0e" />
+      </div>
+      <img
+        src={labyrinth}
+        style={{ cursor: "cell", margin: "1vh" }}
+        onMouseMove={(e) => mouseMove(e)}
+        onMouseOut={() => { setActive(false); pause() }}
+        ref={imgRef}
+        onLoad={imgToPixels}
+        alt="labyrinth" />
+      <div>
+        <b style={{ color: finished ? "green" : (active ? "blue" : "red"), fontSize: "32px" }}>
+          {finished ? "Finished! Press reset for a new round." : (active ? "Active! Be careful." : "Alarm! Move to start area.")}
+        </b>
+        <br />
+      </div>
+      <br />
+      <div>
+        <button onClick={() => { reset(); setFinished(false); setFails(0) }}>Reset</button>
+        <ReactImageUploadComponent
+          withIcon={true}
+          buttonText='Choose level file'
+          singleImage={true}
+          onChange={(x) => {
+            let fr = new FileReader();
+            fr.onload = () => { if (imgRef && imgRef.current && typeof fr.result === "string") { imgRef.current.src = fr.result; } }
+            fr.readAsDataURL(x[0]);
+            reset(); setFinished(false); setFails(0)
+          }}
+          imgExtension={['.jpg', '.gif', '.png', '.gif']}
+          maxFileSize={5242880}
+        />
+      </div>
+      <ul>
+        {finishTimes.map((x, i) => (<li key={i}>{x[0]} ms - {x[1]} fails</li>))}
+      </ul>
     </div>
   );
 }

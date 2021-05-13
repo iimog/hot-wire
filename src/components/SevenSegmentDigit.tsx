@@ -63,7 +63,3 @@ export const SevenSegmentDigit = (props: { digit: number, style: CSSProperties }
         </svg>
     );
 }
-
-SevenSegmentDigit.defaultProps = {
-    color: "#000000"
-}

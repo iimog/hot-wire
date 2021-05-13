@@ -1,6 +1,7 @@
 // Code derived from Brian Hayes CodePen: https://codepen.io/joeyred/pen/gEpVbM available under MIT License
 
 import { SevenSegmentDigit } from "./SevenSegmentDigit"
+import { SevenSegmentDot } from "./SevenSegmentDot";
 
 export const SevenSegmentDisplay = (props: { number: number, color: string, background: string }) => {
     const digitStyle = {
@@ -16,6 +17,10 @@ export const SevenSegmentDisplay = (props: { number: number, color: string, back
         digits.unshift(number % 10)
         number = Math.floor(number / 10)
     }
+    let digitComponents = digits.map(x => <SevenSegmentDigit digit={x} style={digitStyle} />);
+    if (props.number >= 100) {
+        digitComponents.splice(1, 0, <SevenSegmentDot style={{ ...digitStyle, maxWidth: "1.5rem", minWidth: "1.5rem", }} />)
+    }
     return (
         <div style={{
             display: "inline-block",
@@ -24,7 +29,7 @@ export const SevenSegmentDisplay = (props: { number: number, color: string, back
             padding: "1rem",
             lineHeight: 0,
         }} >
-            {digits.map(x => <SevenSegmentDigit digit={x} style={digitStyle} />)}
+            {digitComponents}
         </div>
     );
 }
