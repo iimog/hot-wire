@@ -5,6 +5,8 @@ import ReactImageUploadComponent from 'react-images-upload';
 import { unstable_batchedUpdates } from 'react-dom';
 import { SevenSegmentDisplay } from './components/SevenSegmentDisplay';
 import { useTimer } from 'use-timer';
+import { Button, Table } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 declare global {
   interface Window {
@@ -99,31 +101,41 @@ function App() {
         onLoad={imgToPixels}
         alt="labyrinth" />
       <div>
-        <b style={{ color: finished ? "green" : (active ? "blue" : "red"), fontSize: "32px" }}>
+        <b style={{ color: finished ? "lightgreen" : (active ? "blue" : "red"), fontSize: "32px" }}>
           {finished ? "Finished! Press reset for a new round." : (active ? "Active! Be careful." : "Alarm! Move to start area.")}
         </b>
         <br />
       </div>
       <br />
       <div>
-        <button onClick={() => { reset(); setFinished(false); setFails(0) }}>Reset</button>
+        <Button variant="outline-warning" onClick={() => { reset(); setFinished(false); setFails(0) }}>Reset</Button>
         <ReactImageUploadComponent
-          withIcon={true}
+          withIcon={false}
           buttonText='Choose level file'
           singleImage={true}
+          label=""
+          buttonClassName="btn btn-primary"
+          fileContainerStyle={{ display: "inline-block", background: "transparent" }}
           onChange={(x) => {
             let fr = new FileReader();
             fr.onload = () => { if (imgRef && imgRef.current && typeof fr.result === "string") { imgRef.current.src = fr.result; } }
             fr.readAsDataURL(x[0]);
             reset(); setFinished(false); setFails(0)
           }}
-          imgExtension={['.jpg', '.gif', '.png', '.gif']}
           maxFileSize={5242880}
         />
       </div>
-      <ul>
-        {finishTimes.map((x, i) => (<li key={i}>{x[0]} ms - {x[1]} fails</li>))}
-      </ul>
+      <div style={{
+        color: "white"
+      }}>
+        <h3>Highscore</h3>
+        <Table size="sm" striped={true} variant="dark" style={{ width: "50%", margin: "auto" }}>
+          <thead><th>Time</th><th>Fails</th></thead>
+          <tbody>
+            {finishTimes.map((x, i) => (<tr><td key={i}>{x[0]} ms</td><td>{x[1]}</td></tr>))}
+          </tbody>
+        </Table>
+      </div>
     </div>
   );
 }

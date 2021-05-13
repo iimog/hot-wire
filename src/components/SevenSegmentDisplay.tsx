@@ -17,9 +17,9 @@ export const SevenSegmentDisplay = (props: { number: number, color: string, back
         digits.unshift(number % 10)
         number = Math.floor(number / 10)
     }
-    let digitComponents = digits.map(x => <SevenSegmentDigit digit={x} style={digitStyle} />);
+    let digitComponents = digits.map((x, i) => <SevenSegmentDigit key={i} digit={x} style={digitStyle} />);
     if (props.number >= 100) {
-        digitComponents.splice(1, 0, <SevenSegmentDot style={{ ...digitStyle, maxWidth: "1.5rem", minWidth: "1.5rem", }} />)
+        digitComponents.splice(1, 0, <SevenSegmentDot key="dot" style={{ ...digitStyle, maxWidth: "1.5rem", minWidth: "1.5rem", }} />)
     }
     return (
         <div style={{
