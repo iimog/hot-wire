@@ -4,6 +4,7 @@ import './App.css';
 import Timer from 'react-compound-timer';
 import ReactImageUploadComponent from 'react-images-upload';
 import { unstable_batchedUpdates } from 'react-dom';
+import { SevenSegmentDisplay } from './components/SevenSegmentDisplay';
 
 declare global {
   interface Window {
@@ -81,7 +82,7 @@ function App() {
   }, [])
 
   return (
-    <div className="App">
+    <div className="App" style={{ backgroundColor: "#333333" }}>
       <Timer startImmediately={false} lastUnit="s" timeToUpdate={50}>
 
         {
@@ -90,19 +91,22 @@ function App() {
               <div style={{ fontSize: "32px" }}>
                 Time: <Timer.Seconds />,
               <Timer.Milliseconds /><br />
-            Fails: {fails}
+            Fails:
+                  <SevenSegmentDisplay number={fails} />
               </div>
               <img
                 src={labyrinth}
-                style={{ cursor: "cell" }}
+                style={{ cursor: "cell", margin: "1vh" }}
                 onMouseMove={(e) => mouseMove(e, start, stop, getTime)}
                 onMouseOut={() => { setActive(false); stop() }}
                 ref={imgRef}
                 onLoad={imgToPixels}
                 alt="labyrinth" />
               <div>
-                <b style={{ color: active ? "green" : "red", fontSize: "32px" }}>{active ? "" : "in"}active</b><br />
-                <b style={{ color: finished ? "green" : "red" }}>{finished ? "" : "not "}finished</b><br />
+                <b style={{ color: finished ? "green" : (active ? "blue" : "red"), fontSize: "32px" }}>
+                  {finished ? "Finished! Press reset for a new round." : (active ? "Active! Be careful." : "Alarm! Move to start area.")}
+                </b>
+                <br />
               </div>
               <br />
               <div>
