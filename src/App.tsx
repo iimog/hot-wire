@@ -28,7 +28,7 @@ type Record = {
 function App() {
   const imgRef = useRef<HTMLImageElement>(null);
   const [data, setData] = useState(new Uint8ClampedArray())
-  const [width, setWidth]: [number, any] = useState(1)
+  const [width, setWidth] = useState(1)
   const [active, setActive] = useState(false);
   const [finished, setFinished] = useState(false);
   const [fails, setFails] = useState(0);
