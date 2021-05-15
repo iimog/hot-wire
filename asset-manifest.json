@@ -1,26 +1,28 @@
 {
   "files": {
     "main.css": "/hot-wire/static/css/main.9d5b29c0.chunk.css",
-    "main.js": "/hot-wire/static/js/main.b699f4cc.chunk.js",
-    "main.js.map": "/hot-wire/static/js/main.b699f4cc.chunk.js.map",
-    "runtime-main.js": "/hot-wire/static/js/runtime-main.7ced4cf9.js",
-    "runtime-main.js.map": "/hot-wire/static/js/runtime-main.7ced4cf9.js.map",
+    "main.js": "/hot-wire/static/js/main.e790332f.chunk.js",
+    "main.js.map": "/hot-wire/static/js/main.e790332f.chunk.js.map",
+    "runtime-main.js": "/hot-wire/static/js/runtime-main.bfa8cc7e.js",
+    "runtime-main.js.map": "/hot-wire/static/js/runtime-main.bfa8cc7e.js.map",
     "static/css/2.314b620a.chunk.css": "/hot-wire/static/css/2.314b620a.chunk.css",
-    "static/js/2.4408b8ad.chunk.js": "/hot-wire/static/js/2.4408b8ad.chunk.js",
-    "static/js/2.4408b8ad.chunk.js.map": "/hot-wire/static/js/2.4408b8ad.chunk.js.map",
-    "static/js/3.15c860c3.chunk.js": "/hot-wire/static/js/3.15c860c3.chunk.js",
-    "static/js/3.15c860c3.chunk.js.map": "/hot-wire/static/js/3.15c860c3.chunk.js.map",
+    "static/js/2.613617b1.chunk.js": "/hot-wire/static/js/2.613617b1.chunk.js",
+    "static/js/2.613617b1.chunk.js.map": "/hot-wire/static/js/2.613617b1.chunk.js.map",
+    "static/js/3.8673fa38.chunk.js": "/hot-wire/static/js/3.8673fa38.chunk.js",
+    "static/js/3.8673fa38.chunk.js.map": "/hot-wire/static/js/3.8673fa38.chunk.js.map",
     "index.html": "/hot-wire/index.html",
     "static/css/2.314b620a.chunk.css.map": "/hot-wire/static/css/2.314b620a.chunk.css.map",
     "static/css/main.9d5b29c0.chunk.css.map": "/hot-wire/static/css/main.9d5b29c0.chunk.css.map",
-    "static/js/2.4408b8ad.chunk.js.LICENSE.txt": "/hot-wire/static/js/2.4408b8ad.chunk.js.LICENSE.txt",
-    "static/media/UploadIcon.svg": "/hot-wire/static/media/UploadIcon.469126df.svg"
+    "static/js/2.613617b1.chunk.js.LICENSE.txt": "/hot-wire/static/js/2.613617b1.chunk.js.LICENSE.txt",
+    "static/media/UploadIcon.svg": "/hot-wire/static/media/UploadIcon.469126df.svg",
+    "static/media/hard1.da9a9a3e.png": "/hot-wire/static/media/hard1.da9a9a3e.png",
+    "static/media/spiral1.0074f72e.png": "/hot-wire/static/media/spiral1.0074f72e.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.7ced4cf9.js",
+    "static/js/runtime-main.bfa8cc7e.js",
     "static/css/2.314b620a.chunk.css",
-    "static/js/2.4408b8ad.chunk.js",
+    "static/js/2.613617b1.chunk.js",
     "static/css/main.9d5b29c0.chunk.css",
-    "static/js/main.b699f4cc.chunk.js"
+    "static/js/main.e790332f.chunk.js"
   ]
 }
