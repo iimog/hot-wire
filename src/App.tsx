@@ -1,11 +1,15 @@
 import { MouseEvent, useEffect, useRef, useState } from 'react';
-import labyrinth from './img/simple2.png'
+import simple1 from './img/simple1.png'
+import simple2 from './img/simple2.png'
+import hard1 from './img/hard1.png'
+import shortcut1 from './img/shortcut1.png'
+import spiral1 from './img/spiral1.png'
 import './App.css';
 import ReactImageUploadComponent from 'react-images-upload';
 import { unstable_batchedUpdates } from 'react-dom';
 import { SevenSegmentDisplay } from './components/SevenSegmentDisplay';
 import { useTimer } from 'use-timer';
-import { Button, Table } from 'react-bootstrap';
+import { Button, Col, Dropdown, DropdownButton, Form, Table } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 declare global {
@@ -14,16 +18,24 @@ declare global {
   }
 }
 
+type Record = {
+  levelName: string,
+  playerName: string,
+  time: number,
+  fails: number
+}
 
 function App() {
   const imgRef = useRef<HTMLImageElement>(null);
-  const [data, setData]: [Array<number>, any] = useState([])
+  const [data, setData] = useState(new Uint8ClampedArray())
   const [width, setWidth]: [number, any] = useState(1)
   const [active, setActive] = useState(false);
   const [finished, setFinished] = useState(false);
   const [fails, setFails] = useState(0);
-  const [finishTimes, setFinishTimes]: [Array<[number, number]>, any] = useState([]);
+  const [finishTimes, setFinishTimes] = useState(new Array<Record>());
   const { time, start, pause, reset } = useTimer({ interval: 50, step: 50 });
+  const [levelName, setLevelName] = useState("Simple 1");
+  const [playerName, setPlayerName] = useState("Player Name");
 
   const imgToPixels = () => {
     if (imgRef && imgRef.current !== null) {
@@ -33,7 +45,9 @@ function App() {
       canvas.getContext('2d')?.drawImage(imgRef.current, 0, 0, canvas.width, canvas.height);
       let imgData = canvas.getContext('2d')?.getImageData(0, 0, canvas.width, canvas.height).data;
       window.data = imgData;
-      setData(imgData);
+      if (imgData) {
+        setData(imgData);
+      }
       setWidth(canvas.width)
     }
   }
@@ -74,7 +88,7 @@ function App() {
           pause()
           setActive(false);
           setFinished(true);
-          setFinishTimes([[time, fails], ...finishTimes]);
+          setFinishTimes([{ time, fails, levelName, playerName }, ...finishTimes]);
         }
       }
     }
@@ -84,16 +98,32 @@ function App() {
     setTimeout(imgToPixels, 1000)
   }, [])
 
+  const changeLevel = (newLevel: string, levelName: string) => {
+    if (imgRef && imgRef.current) {
+      imgRef.current.src = newLevel;
+      setLevelName(levelName);
+      reset();
+      setFinished(false);
+      setFails(0);
+    }
+  }
 
   return (
     <div className="App" style={{ backgroundColor: "#333333" }}>
 
       <div style={{ fontSize: "32px", color: "white" }}>
+        <Form.Group>
+          <Form.Row>
+            <Col>
+              <Form.Control size="lg" type="text" placeholder={playerName} onChange={(x) => setPlayerName(x.currentTarget.value)} />
+            </Col>
+          </Form.Row>
+        </Form.Group>
         Time: <SevenSegmentDisplay number={time / 10} dotPosition={2} /> &nbsp;
         Fails: <SevenSegmentDisplay number={fails} color="#ff4242" background="#420e0e" />
       </div>
       <img
-        src={labyrinth}
+        src={simple1}
         style={{ cursor: "cell", margin: "1vh" }}
         onMouseMove={(e) => mouseMove(e)}
         onMouseOut={() => { setActive(false); pause() }}
@@ -108,19 +138,25 @@ function App() {
       </div>
       <br />
       <div>
-        <Button variant="outline-warning" onClick={() => { reset(); setFinished(false); setFails(0) }}>Reset</Button>
+        <Button variant="outline-warning" onClick={() => { reset(); setFinished(false); setFails(0) }} style={{ margin: "10px" }}>Reset</Button>
+        <DropdownButton id="dropdown-basic-button" title="Select Level">
+          <Dropdown.Item onClick={() => { changeLevel(simple1, "Simple 1") }}>Simple 1</Dropdown.Item>
+          <Dropdown.Item onClick={() => { changeLevel(simple2, "Simple 2") }}>Simple 2</Dropdown.Item>
+          <Dropdown.Item onClick={() => { changeLevel(hard1, "Hard 1") }}>Hard 1</Dropdown.Item>
+          <Dropdown.Item onClick={() => { changeLevel(shortcut1, "Shortcut 1") }}>Shortcut 1</Dropdown.Item>
+          <Dropdown.Item onClick={() => { changeLevel(spiral1, "Spiral 1") }}>Spiral 1</Dropdown.Item>
+        </DropdownButton>
         <ReactImageUploadComponent
           withIcon={false}
-          buttonText='Choose level file'
+          buttonText='Choose own level file'
           singleImage={true}
           label=""
           buttonClassName="btn btn-primary"
-          fileContainerStyle={{ display: "inline-block", background: "transparent" }}
+          fileContainerStyle={{ display: "inline-block", background: "transparent", padding: "0", margin: "0" }}
           onChange={(x) => {
             let fr = new FileReader();
-            fr.onload = () => { if (imgRef && imgRef.current && typeof fr.result === "string") { imgRef.current.src = fr.result; } }
+            fr.onload = () => { if (typeof fr.result === "string") { changeLevel(fr.result, "Custom") } }
             fr.readAsDataURL(x[0]);
-            reset(); setFinished(false); setFails(0)
           }}
           maxFileSize={5242880}
         />
@@ -130,9 +166,9 @@ function App() {
       }}>
         <h3>Highscore</h3>
         <Table size="sm" striped={true} variant="dark" style={{ width: "50%", margin: "auto" }}>
-          <thead><th>Time</th><th>Fails</th></thead>
+          <thead><tr><th>Level</th><th>Player</th><th>Time</th><th>Fails</th></tr></thead>
           <tbody>
-            {finishTimes.map((x, i) => (<tr><td key={i}>{x[0]} ms</td><td>{x[1]}</td></tr>))}
+            {finishTimes.map((x, i) => (<tr key={i}><td>{x.levelName}</td><td>{x.playerName}</td><td>{x.time} ms</td><td>{x.fails}</td></tr>))}
           </tbody>
         </Table>
       </div>
