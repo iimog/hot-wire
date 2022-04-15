@@ -11,3 +11,15 @@ Timer starts as soon as you touch the green area with your cursor. It stops when
 [Try it!](https://markus.ankenbrand.me/hot-wire/)
 
 ![Screenshot of Hot Wire after a successful try](screenshot.png)
+
+## Level design
+
+Levels are plain png images. Just use #ff0000 for the goal, #00ff00 for the start, #000000 for walls and #ffffff for everything else.
+
+## Attribution
+
+The seven segment display component is derived from Brian Hayes CodePen: https://codepen.io/joeyred/pen/gEpVbM available under MIT License.
+
+## License
+
+This code is available under MIT License.
